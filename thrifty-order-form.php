@@ -65,6 +65,16 @@ class Order {
 	 * @author Scott Anderson
 	 */
 	public function process_order_form() {
+		if ( ! isset( $_POST['support-nonce'] ) || ! wp_verify_nonce( $_POST['support-nonce'], 'support_form' ) ) {
+
+			// Code not safe abort.
+			return wp_send_json_error( [
+				'message' => 'I dont trust you.'
+			] );
+
+		}
+
+		// Code safe you may proceed.
 		return wp_send_json_success( $_POST );
 	}
 
@@ -148,6 +158,7 @@ class Order {
 					<label for="expiration">Notes</label>
 					<textarea class="u-full-width" placeholder="" id="notes"name="notes"></textarea>
 				</div>
+				<?php wp_nonce_field( 'support_form', 'support-nonce' ); ?>
 				<input class="button-primary" type="submit" id="place-order" value="Submit">
 			</form>
 		</div>
